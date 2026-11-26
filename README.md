@@ -30,6 +30,7 @@ TfL's group lengths and stage-length factors are not public, so the conversion c
 
 ## Key findings
 
+- **"Fivefold increase in Cycleways":** arithmetically fair (90 km in 2016 → 431 km Strategic Cycle Network in Oct 2025 = 4.8×; 450–451 km in 2026 = 5.0×; 401 km under TfL's stricter Cycleway definition = 4.5×), but the terminology drifts between "cycle network", "strategic cycle network" and "Cycleways", the 2016 base is an unpublished back-cast, and the journeys comparison uses a different base year (2019).
 - **Do cycleways cause cycling?** Sites with a cycle lane carry ~4.8× the flow of sites without; after controlling for area, road type and distance to the centre the gap is still about +88% (95% CI +66% to +111%). So the correlation is real. Causation is not shown: an event study of 12 sites that gained a lane gives +32% relative growth (CI +8% to +69%), but with a pre-existing level gap and tiny sample. Sites that already had lanes did not grow faster than others (+15% vs +16%). Script: `analysis/06_cycle_lanes.py`.
 - **Animated weekday map:** the site replays the average spring 2025 weekday at 15-minute resolution (06:00–22:00, 1,447 panel sites) on an OpenFreeMap dark basemap; data built by `analysis/05_daily_profile.py`.
 - Matched-site flow growth 2024→25: **+9.6%** (95% CI +7.0 to +11.7). Our counts-only series reproduces the 2025 level to within sampling error (about ±6%).
