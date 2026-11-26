@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where does 1.66 million come from? Auditing London's cycling number</title>
+<meta name="description" content="TfL says Londoners made 1.66 million daily cycle journeys in 2026. This page rebuilds the calculation from open data and checks whether the number holds up.">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <span>London cycling, audited</span>
+    <nav>
+      <a href="#claim">Claim</a>
+      <a href="#method">Method</a>
+      <a href="#map-section">Map</a>
+      <a href="#time">Over time</a>
+      <a href="#test">Can we check it?</a>
+      <a href="#europe">Europe</a>
+      <a href="#verdict">Verdict</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="kicker">A number worth checking</p>
+      <h1>Is London really cycling 1.66 million times a day?</h1>
+      <p class="deck">Transport for London says daily cycle journeys reached 1.66&nbsp;million in 2026, four years ahead of target. Nobody counted 1.66 million bicycles. This page shows how the figure is produced, which parts of the chain we can rebuild from TfL's open data, and which parts we cannot.</p>
+      <span class="verdict-chip">Short answer: <b>plausible, but not verifiable yet</b></span>
+    </div>
+    <div class="bignum">1.66<small>million daily cycle journey stages, 2026<br>(TfL, <em>Travel in London</em>, 25 Nov 2026)</small></div>
+  </div>
+</div>
+
+<section id="claim">
+  <div class="wrap text">
+    <p class="secno">1 · The claim</p>
+    <h2>What exactly is being claimed</h2>
+    <p class="lede">The <a href="https://www.ianvisits.co.uk/articles/london-reaches-2030-cycling-target-four-years-early-94389/">ianVisits article</a> repeats TfL's press release: daily cycle journeys rose 10.1% in 2026, from 1.50 million to 1.66 million, passing the 1.6&nbsp;million target set for 2030.</p>
+    <p>Two details matter before we look at any data:</p>
+    <ul>
+      <li><strong>"Journeys" means <em>journey stages</em>.</strong> A stage is one leg by one mode. Cycling to a station, taking the train, then walking contains one cycle stage. The headline target counts stages. Counted as whole <em>trips</em>, TfL gives <span class="num">1.55&nbsp;million</span> for 2026 (<span class="num">1.41&nbsp;million</span> for 2025).</li>
+      <li><strong>It is a modelled average day, not a count.</strong> It is a seven-day average built from <em>weekday spring counts</em> and a household travel survey. The result is quoted to three significant digits, but, as we will see, that precision is not earned.</li>
+    </ul>
+    <div class="tablewrap">
+    <table>
+      <thead><tr><th>Year</th><th class="r">Daily cycle stages</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td>2000</td><td class="r num">0.47 m</td><td>Back-estimated, <em>Travel in London 2025</em></td></tr>
+        <tr><td>2019</td><td class="r num">1.05 m</td><td>TfL, pre-pandemic baseline</td></tr>
+        <tr><td>2022</td><td class="r num">1.20 m</td><td>Cycling Action Plan 2 baseline</td></tr>
+        <tr><td>2024</td><td class="r num">1.33 m</td><td><em>Travel in London 2025</em></td></tr>
+        <tr><td>2025</td><td class="r num">1.50 m</td><td><em>Travel in London 2025</em> (+12.7%)</td></tr>
+        <tr><td>2026</td><td class="r num"><strong>1.66 m</strong></td><td>TfL press release, 25 Nov 2026 (+10.1%, +57.7% vs 2019)</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">2 · How the number is built</p>
+      <h2>From a camera on a street corner to "1.66 million"</h2>
+      <p class="lede">TfL publishes a <a href="https://cycling.data.tfl.gov.uk/ActiveTravelCountsProgramme/0.5%20Strategic%20cycling%20estimates%20-%20methodology%20note.pdf">methodology note</a> that is refreshingly explicit. The chain has six links. Some inputs are public, some are not.</p>
+    </div>
+
+    <ol class="steps text">
+      <li>
+        <h3>Count at a fixed panel of sites <span class="known open">public data</span></h3>
+        <p>1,451 count locations were drawn to represent every kind of road and path where cycling is allowed. Each is counted once a year, in spring, on a "neutral" weekday (preferably Tue–Thu, no holiday or strike) from 06:00 to 22:00, in both directions, mostly from video that is then reviewed by hand. Per site, all 15-minute counts are summed:</p>
+        <div class="formulas"><span class="tag">q<sub>s</sub></span> = Σ cycles counted at site s, 06:00–22:00, all directions</div>
+        <p>In the 2025 files the average panel site recorded <span class="num">1,398</span> cycles that day, but the median site only <span class="num">509</span>: a few central roads carry enormous flows.</p>
+      </li>
+      <li>
+        <h3>Split the panel into 15 strata <span class="known open">public data</span></h3>
+        <p>3 areas (central = inside the Congestion Charge zone, 209 sites; inner, 748; outer, 494) × 5 road types (A road, B road, minor road, local street, motor-vehicle-free path). Within each stratum the site flows are averaged:</p>
+        <div class="formulas"><span class="tag">q̄<sub>g</sub></span> = (1 / N<sub>g</sub>) · Σ q<sub>s</sub>      for g = 1 … 15</div>
+      </li>
+      <li>
+        <h3>Scale up with network length to get weekday cycle-km <span class="known closed">lengths not published</span></h3>
+        <p>Flows cannot be added across sites (the same rider passes several), but distances can. Each stratum's average flow is multiplied by the total length of cyclable network in that stratum (roads plus paths, from GIS data), as if every counted cycle rode the stratum's average share of the network.</p>
+        <div class="formulas"><span class="tag">cycle-km<sub>weekday</sub></span> = Σ<sub>g</sub> <span class="unk">L<sub>g</sub></span> · q̄<sub>g</sub></div>
+        <p>TfL does not publish the 15 lengths <span class="num">L<sub>g</sub></span>. We estimated them from OpenStreetMap (<a href="#strata">table below</a>).</p>
+      </li>
+      <li>
+        <h3>Convert kilometres into stages <span class="known closed">LTDS factors not published</span></h3>
+        <p>Cycle-km become stages by dividing by an average stage length from the London Travel Demand Survey (LTDS, about 16,000 residents a year): a three-year average of straight-line stage lengths on Mon–Thu, excluding stages over 20&nbsp;km, multiplied by a "wiggle" factor of 1.3 because real routes are longer than the crow flies. Weekend riding is not counted at all; a weekday-to-weekend ratio from the same survey adds it back.</p>
+        <div class="formulas">stages<sub>wd</sub> = cycle-km / <span class="unk">S<sub>wd</sub></span>           <span class="unk">S<sub>wd</sub></span> = 1.3 × mean crow-fly stage length (Mon–Thu)
+stages<sub>we</sub> = cycle-km / <span class="unk">S<sub>we</sub></span> × <span class="unk">f</span>        <span class="unk">f</span> = weekend stages ÷ weekday stages (LTDS)
+<span class="tag">stages</span>      = (5 · stages<sub>wd</sub> + 2 · stages<sub>we</sub>) / 7          ← the 1.66&nbsp;million</div>
+      </li>
+      <li>
+        <h3>Convert stages to trips <span class="known closed">LTDS factors not published</span></h3>
+        <p>Trips = stages × (trips ÷ stages ratio from the LTDS), computed separately for weekdays and weekends, then the same 5:2 weighting. This gives the 1.55&nbsp;million trips.</p>
+      </li>
+      <li>
+        <h3>Repeat every year, compare with the previous one <span class="known part">partly open</span></h3>
+        <p>TfL stresses that the series is designed for <em>relative change</em>; the absolute levels carry uncertainty. 2020 and 2021 are excluded because of the pandemic.</p>
+      </li>
+    </ol>
+
+    <div class="text">
+      <div class="callout">
+        <h3>Reading the chain as one line</h3>
+        <p>Because steps 4 and 5 are just constants, the headline is effectively:</p>
+        <div class="formulas" style="margin:12px 0">stages ≈ <span class="tag">κ</span> · Σ<sub>g</sub> L<sub>g</sub> · q̄<sub>g</sub>          where κ = (5/S<sub>wd</sub> + 2f/S<sub>we</sub>) / 7</div>
+        <p>The open counts give us q̄<sub>g</sub> for every year. TfL's published stage totals then tell us what κ must have been. Whether κ stays constant is the key question below.</p>
+      </div>
+    </div>
+
+    <h3 id="strata" style="margin-top:40px">Our rebuild: the 15 strata for spring 2025</h3>
+    <p class="text">Flows come from TfL's 2025 count files. Network length is our own estimate from OpenStreetMap (Geofabrik Greater London extract), with each road segment assigned to the area of its nearest monitoring site, because TfL's zone polygons are not in the open data folder. Motorways are excluded; service roads are excluded in this table.</p>
+    <div class="tablewrap">
+    <table id="strata-table">
+      <thead><tr><th>Area</th><th>Road type</th><th class="r">Sites</th><th class="r">Mean flow q̄<sub>g</sub><br>(cycles/day)</th><th class="r">Network L<sub>g</sub><br>(km, OSM)</th><th class="r">Cycle-km<br>(thousand)</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <p class="text" id="strata-note"></p>
+  </div>
+</section>
+
+<section id="map-section">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">3 · The monitoring network</p>
+      <h2>2,175 places where someone counted</h2>
+      <p>Each dot is a TfL monitoring location. Filled dots belong to the 1,451-site strategic panel that feeds the headline estimate; hollow dots are other sites (Cycleway before/after studies, legacy central London counts). Size and colour show cycles counted between 06:00 and 22:00 on the spring survey weekday.</p>
+    </div>
+    <div class="mapbox">
+      <div class="mapctl">
+        <label for="m-year">Spring count year</label>
+        <select id="m-year"><option>2025</option><option>2024</option><option>2022</option><option>2019</option></select>
+        <label for="m-mode">Show</label>
+        <select id="m-mode">
+          <option value="flow">Cycles per weekday (06–22h)</option>
+          <option value="change">Change 2019 → selected year</option>
+        </select>
+        <label for="m-area">Area</label>
+        <select id="m-area">
+          <option value="all">All of London</option>
+          <option>Central</option><option>Inner</option><option>Outer</option>
+        </select>
+        <label class="chk"><input type="checkbox" id="m-panel"> Strategic panel only</label>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div id="map"></div>
+    </div>
+    <p class="mapnote">Basemap: <a href="https://openfreemap.org/">OpenFreeMap</a> vector tiles © <a href="https://www.openmaptiles.org/">OpenMapTiles</a> data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Sites: TfL <em>1 Monitoring locations.csv</em>. Click a dot for its history.</p>
+  </div>
+</section>
+
+<section id="time">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">4 · Cycling over time</p>
+      <h2>What the counts say about the trend</h2>
+      <p>The open spring counts go back to 2015. For every year we computed the weekday cycle-km index (step 3) and scaled it with a single constant so that 2025 matches TfL's published 1.50&nbsp;million. The hollow line is therefore <em>what the counts alone imply</em> if the conversion factor κ never changed.</p>
+    </div>
+
+    <figure>
+      <p class="charttitle">Daily cycle stages, London: published versus counts-only reconstruction</p>
+      <p class="chartsub">Million stages per average day. Solid dots: TfL published. Line: our reconstruction from open count data (constant κ).</p>
+      <div id="chart-timeline"></div>
+      <figcaption>2020 is missing in both series (pandemic); 2021 is shown but counts were disrupted. The 2026 point has no count data behind it in the public archive. 2015–2018 stage totals are not given in the TfL documents we found; the 2015 published point is derived from TfL's statement that stages fell 3% between 2015 and 2019.</figcaption>
+    </figure>
+
+    <div class="text">
+      <p>Three phases are visible. Between 2015 and 2019 our counts-based line rises about 11%, while TfL's published stage series is <em>down</em> 3% over the same years (it implies about 1.08&nbsp;million in 2015). So even before the pandemic the survey-based conversion step moved the published series by roughly 13% relative to the raw counts. The pandemic then reset behaviour. Since 2022 panel flows have risen every year, with the biggest jump in the 2025 wave.</p>
+    </div>
+
+    <div class="twocol">
+      <figure>
+        <p class="charttitle">Growth is strongest in the centre</p>
+        <p class="chartsub">Weekday cycle-km by area, index 2019 = 100 (our reconstruction).</p>
+        <div id="chart-area"></div>
+        <figcaption>Central London was already above its 2019 level in 2022; outer London has grown least.</figcaption>
+      </figure>
+      <figure>
+        <p class="charttitle">Where the 2019–2025 growth comes from</p>
+        <p class="chartsub">Change 2019 → 2025.</p>
+        <div id="chart-decomp"></div>
+        <figcaption>Counts alone give about +32%. TfL's published stages rose +43%. The difference is the survey-based conversion step, which TfL itself says "fully captures the impact of the pandemic" on weekend cycling and journey length only from 2025.</figcaption>
+      </figure>
+    </div>
+
+    <div class="text">
+      <h3>Weather matters</h3>
+      <p>The counts are one day per site. Rain suppresses cycling. In the 2025 wave only <span class="num">5.7%</span> of recorded 15-minute slots were logged as wet, against <span class="num">14.6%</span> in 2024. TfL itself notes that spring 2025 "had particularly good weather". That makes 2025 a high base for the 2026 comparison.</p>
+    </div>
+    <figure>
+      <p class="charttitle">Share of count slots recorded as wet, spring waves</p>
+      <div id="chart-wet"></div>
+    </figure>
+  </div>
+</section>
+
+<section id="test">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">5 · Can 1.66 million be checked?</p>
+      <h2>Seven tests, three outcomes</h2>
+    </div>
+    <div class="tablewrap">
+    <table>
+      <thead><tr><th style="width:26%">Test</th><th style="width:10%">Result</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td>The figure was really published</td><td><span class="st ok">YES</span></td><td>TfL press release, 25 Nov 2026: 1.66&nbsp;m stages (+10.1%), 1.55&nbsp;m trips. The ianVisits article reports it correctly, except that it says "journeys" where TfL means stages.</td></tr>
+        <tr><td>The numbers agree with each other</td><td><span class="st ok">YES</span></td><td>1.66 ÷ 1.05 (2019) = 1.58, matching "+57.7%". 1.66 ÷ 1.101 = 1.508, so 2025 appears to have been revised slightly from 1.496 to about 1.51 (the 2025 area figures summed to 1.496&nbsp;m). Naive 1.66 ÷ 1.50 would be +10.7%, which is rounding. The trips-to-stages ratio is 0.934 in 2026 and 0.94 in 2025.</td></tr>
+        <tr><td>The method is sound and documented</td><td><span class="st ok">YES</span></td><td>Stratified sample, counts → cycle-km → stages. Every step is described in TfL's note, and we rebuilt steps 1–3 from public data.</td></tr>
+        <tr><td>Panel counts really rose since 2019</td><td><span class="st ok">YES</span></td><td>On 1,438 sites present in both waves, stratum-weighted flow rose <strong>+32.5%</strong> (95% CI +28% to +37%) from 2019 to 2025 and <strong>+9.6%</strong> (+7.0% to +11.7%) from 2024 to 2025.</td></tr>
+        <tr><td>The 2025 level of 1.50 million</td><td><span class="st part">PARTLY</span></td><td>We reproduce the trend and the area split, but not the absolute level: it needs TfL's stratum lengths and LTDS stage lengths. Our OSM-based network (20,300&nbsp;km) implies about 6&nbsp;km per stage; scaling the network to TfL's own hint (431&nbsp;km of Cycleways = 2.5% of all cyclable roads, so ~17,200&nbsp;km) implies about 5.3&nbsp;km. Both numbers are consistent with the published 1.50&nbsp;million by construction, but we cannot tell which is closer to TfL's own inputs, because TfL does not publish its stage lengths. The spread shows how much the closed inputs matter.</td></tr>
+        <tr><td>Independent survey agrees on level and trend</td><td><span class="st no">NO</span></td><td>The LTDS puts London residents' cycling at about <strong>0.06 trips per person per day</strong>, "similar" to before the pandemic (+1% from 2019 to 2024). That is roughly 0.55&nbsp;million trips a day for 9.1&nbsp;million residents, against 1.4&nbsp;million estimated from counts, and a flat trend against +42%. TfL lists reasons (visitors, commuters from outside London, couriers, survey sample size, different time windows) but cannot separate them.</td></tr>
+        <tr><td>The 2026 value itself</td><td><span class="st no">NOT YET</span></td><td>The open archive ends at the spring/autumn 2025 waves. The spring 2026 counts, the 2026 LTDS factors and the stratum lengths are not public, so 1.66&nbsp;million cannot be recomputed. We can only ask what it would take.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="text">
+      <h3>What would spring 2026 have to look like?</h3>
+      <p>Hold the stage-per-cycle-km factor κ constant, and +10.1% in stages needs +10.1% in weekday cycle-km. But κ has not been constant: between 2024 and 2025 stages grew 12.7% while cycle-km grew about 9.1%, so κ rose 3.3%. If it drifts again, counts only need to rise about 6.6%.</p>
+    </div>
+    <figure>
+      <p class="charttitle">Year-on-year change in panel cycle-km versus what 2026 needs</p>
+      <p class="chartsub">Matched sites, stratum-weighted, with bootstrap 95% intervals. Dashed lines: growth needed in 2026.</p>
+      <div id="chart-scenario"></div>
+      <figcaption>Only 2024→25 had growth in the range 2026 requires. In 2022→23 and 2023→24 counts grew +2% and +1%. A second year of ~7–10% growth is plausible given the 2025 trajectory and new Cycleways, but it is not the base case from history alone, and it follows an unusually dry 2025 spring.</figcaption>
+    </figure>
+
+    <div class="text">
+      <h3>How precise can the number be?</h3>
+      <p>Resampling the 1,451 panel sites within each stratum (a bootstrap) gives a sampling error of about <strong>±6%</strong> (95% interval) on the 2025 level, before any uncertainty in lengths, stage lengths or weekend ratios. The 2026 headline sits <span class="num">3.8%</span> above the 1.6&nbsp;million target. That margin is smaller than the sampling noise on the level. The <em>growth</em> since 2019 is far better determined than the level, because the same sites are compared year to year.</p>
+    </div>
+  </div>
+</section>
+
+<section id="europe">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">6 · Perspective</p>
+      <h2>How does London compare?</h2>
+      <p>City comparisons are fragile: different boundaries, different definitions of "trip", different survey years. The figures below come from each city's own sources and are indicative only. Greater London is far larger and less dense than Paris or Copenhagen proper, so the per-resident gap is somewhat overstated.</p>
+    </div>
+    <div class="tablewrap">
+    <table>
+      <thead><tr><th>City</th><th>Bicycle use</th><th>Per resident</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td>London (counts-based)</td><td>1.55 m trips/day (2026); 4.7% of trips (2024)</td><td class="num">≈ 0.17 trips/day</td><td>TfL; population 9.09 m (ONS mid-2024)</td></tr>
+        <tr><td>London (LTDS survey)</td><td>≈ 3% of residents' trips in 2019/20; trip rate "similar" since</td><td class="num">≈ 0.06 trips/day</td><td>TfL <em>Travel in London 2025</em> LTDS report</td></tr>
+        <tr><td>Paris (residents)</td><td>11.2% of trips within Paris (2023 mobility survey)</td><td class="num">0.5 trips/day</td><td>Ville de Paris / Institut Paris Région</td></tr>
+        <tr><td>Berlin</td><td>18% of all trips (SrV 2023/24)</td><td class="num">≈ 0.6 trips/day (3.3 trips/person × 18%)</td><td>Senatsverwaltung Berlin</td></tr>
+        <tr><td>Copenhagen</td><td>45% of work/school trips; 2.65 m bicycle-km per day</td><td class="num">≈ 4 km/day (approx. 650,000 residents)</td><td>City of Copenhagen mobility report 2024</td></tr>
+        <tr><td>London (our estimate)</td><td>≈ 8–9 m cycle-km per weekday</td><td class="num">≈ 0.9 km/day</td><td>This page, spring 2025 counts × OSM network</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="text">
+      <p>Two readings are possible. Even on TfL's headline, London is still well behind Paris, Berlin and Copenhagen per resident. And the spread between London's two own sources (0.06 versus 0.17 trips per resident per day) is as large as the gap to the leaders, which is another reason not to over-read three significant digits.</p>
+      <p class="muted" style="font-size:14px">I looked for a primary-source figure for Amsterdam and Utrecht but did not find a comparable per-resident number I could verify, so I left the Dutch cities out rather than quote one from memory.</p>
+    </div>
+  </div>
+</section>
+
+<div class="verdict" id="verdict">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">7 · Conclusion</p>
+      <h2>Can 1.66 million be right?</h2>
+      <p class="pull">As the output of TfL's method, yes. As an exact number of cycle stages made on an average London day, nobody can say, and the 2026 figure cannot yet be verified.</p>
+      <p>Here is why the number stands, and why it falls short of proof:</p>
+    </div>
+    <div class="meter">
+      <div><b>What holds up</b>The method is coherent. Counts really did rise: +32% on matched sites since 2019 and about +10% in 2025 alone. The published figures are internally consistent.</div>
+      <div><b>What we could not check</b>The 2026 counts, the stratum lengths, the LTDS stage lengths and weekend factors. About a quarter of the post-2019 growth in the published series comes from those conversions, not from counts.</div>
+      <div><b>What argues for caution</b>A ±6% sampling error. A dry 2025 base. A resident survey that shows flat cycling at a much lower level. The target was cleared by just 3.8%.</div>
+    </div>
+    <div class="text">
+      <p><strong>Our verdict: plausible, directionally credible, not independently verifiable.</strong> A 10% rise needs counts to grow by roughly 7–10% in spring 2026, which is within what the 2025 wave showed. It is a reasonable estimate, in the sense that no step is obviously wrong. But "four years early" and "1.66 million" are statements of precision that the data behind them do not support. A fair description (our judgement) is "roughly 1.5 to 1.8 million daily cycle stages, with a clear upward trend".</p>
+      <p>When the spring 2026 wave is added to the open data folder, this page's pipeline can be re-run in a few minutes to settle the question.</p>
+      <h3 style="color:var(--paper)">What would improve the analysis</h3>
+      <ul>
+        <li>TfL could publish the 15 stratum lengths and the LTDS stage lengths and ratios. With those, the whole chain becomes reproducible.</li>
+        <li>Uncertainty ranges next to every headline number would settle the "target reached" argument either way.</li>
+        <li>Proper congestion-zone and inner-cordon polygons would replace our nearest-site assignment of OSM roads.</li>
+        <li>Use OS Highways (TfL's source) instead of OSM, and test other road-type mappings.</li>
+        <li>Add the Cycleway programme and automatic counters (Blackfriars, Embankment) as independent trend checks.</li>
+        <li>Add Santander Cycles hires and dockless data for a second opinion, and weather-adjust the spring counts.</li>
+        <li>A like-for-like comparison with Amsterdam, Utrecht and other cities using each city's own count programme.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <h3 style="margin-top:0">Sources</h3>
+    <ol class="refs">
+      <li>ianVisits, <a href="https://www.ianvisits.co.uk/articles/london-reaches-2030-cycling-target-four-years-early-94389/">London reaches 2030 cycling target four years early</a>, 25 Nov 2026.</li>
+      <li>TfL press release, <a href="https://tfl.gov.uk/info-for/media/press-releases/2026/november/london-breaks-another-cycling-record-as-it-reaches-2030-daily-cycle-journey-target-an-unprecedented-four-years-ahead-of-schedule">London breaks another cycling record</a>, 25 Nov 2026.</li>
+      <li>TfL, <a href="https://cycling.data.tfl.gov.uk/">cycling.data.tfl.gov.uk</a>, <em>ActiveTravelCountsProgramme</em>: monitoring locations, spring count files 2015–2025, release note and <a href="https://cycling.data.tfl.gov.uk/ActiveTravelCountsProgramme/0.5%20Strategic%20cycling%20estimates%20-%20methodology%20note.pdf">cycling use estimates methodology note</a>.</li>
+      <li>TfL, <a href="https://content.tfl.gov.uk/travel-in-london-2025-active-travel-trends-acc.pdf"><em>Travel in London 2025: Active travel trends</em></a> and <a href="https://tfl.gov.uk/cdn/static/cms/documents/travel-in-london-2025-the-travel-behaviour-of-london-residents-based-on-the-ltds-acc.pdf">the LTDS companion report</a>.</li>
+      <li>TfL newsroom, <a href="https://tfl-newsroom.prgloo.com/news/new-tfl-data-shows-the-number-of-daily-cycling-journeys-in-london-has-risen-by-43-per-cent-since-2019-as-tfls-cycle-network-exceeds-431km">2025 figures by area</a> (central 211k, inner 747k, outer 538k).</li>
+      <li>OpenStreetMap contributors, Greater London extract by <a href="https://download.geofabrik.de/europe/united-kingdom/england/greater-london.html">Geofabrik</a> (ODbL).</li>
+      <li>Ville de Paris, <a href="https://www.paris.fr/pages/le-bilan-des-deplacements-a-paris-en-2023-27604">Le bilan des déplacements à Paris en 2023</a>; Institut Paris Région mobility survey (11.2% bicycle share in Paris).</li>
+      <li>Senatsverwaltung Berlin, <a href="https://www.berlin.de/sen/uvk/mobilitaet-und-verkehr/verkehrsdaten/zahlen-und-fakten/mobilitaet-in-staedten-srv-2023/">SrV 2023</a>.</li>
+      <li>City of Copenhagen mobility report 2024, as summarised by <a href="https://global-cycling-safety.org/en/2024/06/copenhagen-mobility-report-2024-cycling-trends/">Global Cycling Safety</a>.</li>
+    </ol>
+    <p>Code, data processing and method are in the <code>analysis/</code> folder of the repository. Contains public sector information licensed under the Open Government Licence v3.0 and OpenStreetMap data © OpenStreetMap contributors. An independent analysis; not affiliated with TfL.</p>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
