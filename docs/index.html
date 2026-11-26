@@ -20,6 +20,7 @@
       <a href="#day">A day</a>
       <a href="#time">Over time</a>
       <a href="#test">Can we check it?</a>
+      <a href="#lanes">Cycleways</a>
       <a href="#europe">Europe</a>
       <a href="#verdict">Verdict</a>
     </nav>
@@ -263,10 +264,55 @@ stages<sub>we</sub> = cycle-km / <span class="unk">S<sub>we</sub></span> × <spa
   </div>
 </section>
 
+<section id="lanes">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">6 · Do cycleways cause cycling?</p>
+      <h2>"Build it and they will come": correlation, yes. Causation, not proven</h2>
+      <p>The Mayor, quoted in the article, ties the rise to a "fivefold increase in Cycleways" and says that "if you build high-quality cycling infrastructure people will use it". Two claims are folded together: that places with cycle lanes have more cycling, and that building lanes <em>creates</em> cycling. The first is easy to test with TfL's open counts; the second is much harder.</p>
+      <h3>Step 1: is there a correlation?</h3>
+      <p>Since 2022 TfL's counts record on which part of the street each cyclist rides (carriageway, cycle lane, bus lane, shared path, pavement). I flagged each panel site as having a cycle lane if any cyclists were counted in one in 2022–2025 (<span class="num">16%</span> of 1,450 sites), then compared average flows. Raw, lane sites carry <strong>about 4.8 times</strong> the cycling of other sites. That is a huge gap, but a naive one: lanes are built on big, busy, central streets.</p>
+    </div>
+    <figure>
+      <p class="charttitle">How much busier are count sites with a cycle lane?</p>
+      <p class="chartsub">Difference in typical (geometric-mean) weekday flow, sites with vs without a cycle lane, 2022–25. Bars: estimate; whiskers: bootstrap 95% interval.</p>
+      <div id="chart-lanes"></div>
+      <figcaption>Comparing like with like (same area of London and road type, then also distance from Charing Cross) removes more than half of the gap, but a large one remains. TfL's own Travel in London 2025 finds the same pattern and states that it "does not in any case imply causality in any direction".</figcaption>
+    </figure>
+    <div class="text">
+      <h3>Step 2: is it causal?</h3>
+      <p>Three things stand in the way:</p>
+      <ul>
+        <li><strong>Reverse causation.</strong> Planners put lanes where many people already cycle, or where demand is expected. Busy streets get lanes, not the other way round.</li>
+        <li><strong>Confounding.</strong> Dense, young, affluent, short-distance neighbourhoods produce both political support for lanes and cycling. We control for area, road type and distance to the centre, but not for density, income, hills or the quality of the rest of the street grid.</li>
+        <li><strong>Displacement.</strong> A new lane can pull riders off a parallel street. Counts at one site cannot see whether total cycling in the area rose.</li>
+      </ul>
+      <p>The best test with these data is an <strong>event study</strong>: find sites that had no lane in 2022 but did by 2025 and compare their change with sites that never had one. If lanes create cycling, "gainers" should pull ahead.</p>
+    </div>
+    <figure>
+      <p class="charttitle">Change in weekday flow, spring 2022 → spring 2025</p>
+      <p class="chartsub">Geometric-mean change in flow at matched sites, by lane status in 2022 and 2025.</p>
+      <div id="chart-event"></div>
+      <figcaption id="event-note"></figcaption>
+    </figure>
+    <div class="text">
+      <p>The result is suggestive but thin. Gainers grew about <strong>+32% more</strong> than similar sites that never had a lane (95% interval roughly +8% to +69%). But there are only <strong>12</strong> of them, so any one big site matters. They already had somewhat busier streets in 2022 (about +34%, interval from −15% to +110%), which is the selection problem in miniature. And sites that <em>already</em> had lanes in 2022 grew no faster than sites without (+15% against +16%), so the lanes that existed did not make cycling grow faster on those streets. Across the whole period the growth is broad: it also appears where nothing was built.</p>
+      <h3>Step 3: the network-level story</h3>
+      <p>TfL's Strategic Cycle Network grew from 90&nbsp;km in 2016 to 431&nbsp;km in 2025 (4.8×), 7% in the last year. Published stages grew +43% between 2019 and 2025 and counts-only +32%. Both go up over time, so they correlate almost by construction; with a handful of annual points and a pandemic in the middle this cannot separate lanes from everything else that changed (e-bikes, hire schemes, working from home, fuel and fare prices, the Covid-era habit changes). The 2015–2019 stretch is a mild counter-example: counts rose about 11% and published stages fell 3%, while the early Quietway and Superhighway network was growing. Those early routes were mostly lower quality than today's Cycleways, so this is not proof of anything either.</p>
+      <p>Two more observations. Cycleways are 2.5% of cyclable roads and TfL estimates only about a third of cycling takes place on them, so two thirds of cycling is on streets with no Cycleway at all. And TfL's resident survey finds that 44% of Cycleway users say they now cycle journeys they used to make another way: consistent with some new cycling, but self-reported and not a measured effect.</p>
+      <div class="callout">
+        <h3>Verdict on the claim</h3>
+        <p><strong>Correlation: yes, strong and robust to the controls we can build.</strong> <strong>Causation: plausible, partly supported, not demonstrated.</strong> Our event study points to a positive effect of new lanes, but it rests on 12 sites with no pre-trend data. The honest statement is "places with cycle lanes have much more cycling, and there are hints that building them adds to it", not that the fivefold network growth explains the 60% rise in journeys.</p>
+      </div>
+      <p class="muted" style="font-size:14px">Script: <code>analysis/06_cycle_lanes.py</code>. Lane status is inferred from where cyclists were counted, so a lane that nobody used on the survey day is missed, which biases the lane/no-lane gap downwards slightly. Flows are site averages of log weekday counts; confidence intervals use 1,000 bootstrap resamples.</p>
+    </div>
+  </div>
+</section>
+
 <section id="europe">
   <div class="wrap">
     <div class="text">
-      <p class="secno">6 · Perspective</p>
+      <p class="secno">7 · Perspective</p>
       <h2>How does London compare?</h2>
       <p>City comparisons are fragile: different boundaries, different definitions of "trip", different survey years. The figures below come from each city's own sources and are indicative only. Greater London is far larger and less dense than Paris or Copenhagen proper, so the per-resident gap is somewhat overstated.</p>
     </div>
@@ -293,7 +339,7 @@ stages<sub>we</sub> = cycle-km / <span class="unk">S<sub>we</sub></span> × <spa
 <div class="verdict" id="verdict">
   <div class="wrap">
     <div class="text">
-      <p class="secno">7 · Conclusion</p>
+      <p class="secno">8 · Conclusion</p>
       <h2>Can 1.66 million be right?</h2>
       <p class="pull">As the output of TfL's method, yes. As an exact number of cycle stages made on an average London day, nobody can say, and the 2026 figure cannot yet be verified.</p>
       <p>Here is why the number stands, and why it falls short of proof:</p>

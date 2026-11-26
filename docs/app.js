@@ -152,6 +152,46 @@
     document.getElementById("chart-scenario").innerHTML = svg(W, H, s);
   })();
 
+  /* ---------- cycle lanes ---------- */
+  fetch("data/lanes.json").then((r) => r.json()).then((L) => {
+    const pct = (v) => (v >= 0 ? "+" : "") + Math.round(v * 100) + "%";
+    (function () {
+      const W = 1000, H = 250, m = { l: 190, r: 70, t: 14, b: 34 };
+      const sx = scale(0, 5.5, m.l, W - m.r);
+      let s = `<g class="ax">${[0, 1, 2, 3, 4, 5].map((t) => `<line x1="${sx(t)}" x2="${sx(t)}" y1="${m.t}" y2="${H - m.b}"/><text x="${sx(t)}" y="${H - 12}" text-anchor="middle">+${t * 100}%</text>`).join("")}</g>`;
+      L.ladder.forEach((d, i) => {
+        const y = m.t + 14 + i * 62, col = i === 0 ? "#9aa3bd" : C.blue;
+        s += `<text class="lab" x="${m.l - 12}" y="${y + 24}" text-anchor="end">${d.label}</text>
+          <rect x="${sx(0)}" y="${y}" width="${sx(d.ratio) - sx(0)}" height="34" fill="${col}"/>
+          <line x1="${sx(d.ci[0])}" x2="${sx(d.ci[1])}" y1="${y + 17}" y2="${y + 17}" stroke="${C.ink}" stroke-width="1.6"/>
+          <line x1="${sx(d.ci[0])}" x2="${sx(d.ci[0])}" y1="${y + 9}" y2="${y + 25}" stroke="${C.ink}" stroke-width="1.6"/>
+          <line x1="${sx(d.ci[1])}" x2="${sx(d.ci[1])}" y1="${y + 9}" y2="${y + 25}" stroke="${C.ink}" stroke-width="1.6"/>
+          <text class="lab" x="${sx(d.ci[1]) + 10}" y="${y + 22}" style="font-weight:700">${pct(d.ratio)}</text>`;
+      });
+      document.getElementById("chart-lanes").innerHTML = svg(W, H, s);
+    })();
+    (function () {
+      const e = L.event, W = 1000, H = 280, m = { l: 60, r: 20, t: 24, b: 56 };
+      const rows = [
+        [`Gained a lane\n(n = ${e.gainers})`, e.growth_gain, C.red],
+        [`Never had a lane\n(n = ${e.never})`, e.growth_never, "#9aa3bd"],
+        [`Had a lane in 2022 and 2025\n(n = ${e.always})`, e.growth_always, C.blue],
+      ];
+      const sy = scale(0, 0.7, H - m.b, m.t), bw = 150, gap = (W - m.l - m.r - 3 * bw) / 4;
+      let s = yAxis(sy, [0, 0.2, 0.4, 0.6], m.l, W - m.r, (t) => "+" + Math.round(t * 100) + "%");
+      rows.forEach(([label, v, col], i) => {
+        const x = m.l + gap + i * (bw + gap), lines = label.split("\n");
+        s += `<rect x="${x}" y="${sy(v)}" width="${bw}" height="${sy(0) - sy(v)}" fill="${col}"/>
+          <text class="lab" x="${x + bw / 2}" y="${sy(v) - 8}" text-anchor="middle" style="font-weight:700">${pct(v)}</text>
+          <text class="lab" x="${x + bw / 2}" y="${H - 34}" text-anchor="middle">${lines[0]}</text>
+          <text x="${x + bw / 2}" y="${H - 18}" text-anchor="middle" style="font:11px var(--mono);fill:${C.muted}">${lines[1]}</text>`;
+      });
+      document.getElementById("chart-event").innerHTML = svg(W, H, s);
+      document.getElementById("event-note").textContent =
+        `Difference-in-differences (gainers minus never-lane sites in the same area × road-type strata): ${pct(e.did)} (95% interval ${pct(e.did_ci[0])} to ${pct(e.did_ci[1])}). Only ${e.gainers} gainers, so treat as a hint.`;
+    })();
+  });
+
   /* ---------- strata table ---------- */
   (function () {
     const tb = document.querySelector("#strata-table tbody");
