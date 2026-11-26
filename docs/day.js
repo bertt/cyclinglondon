@@ -33,6 +33,7 @@
     cooperativeGestures: true,
   });
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  window.dayMap = map;
 
   const colour = ["interpolate", ["linear"], ["get", "v"], 0, "#3b2a9e", 60, "#8a2fc4", 200, "#e8459b", 500, "#ff8a3d", 1100, "#ffe36e"];
   const base = ["+", 1.2, ["*", 0.32, ["sqrt", ["get", "v"]]]];
