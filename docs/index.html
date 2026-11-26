@@ -17,6 +17,7 @@
       <a href="#claim">Claim</a>
       <a href="#method">Method</a>
       <a href="#map-section">Map</a>
+      <a href="#day">A day</a>
       <a href="#time">Over time</a>
       <a href="#test">Can we check it?</a>
       <a href="#europe">Europe</a>
@@ -155,6 +156,26 @@ stages<sub>we</sub> = cycle-km / <span class="unk">S<sub>we</sub></span> × <spa
       <div id="map"></div>
     </div>
     <p class="mapnote">Basemap: <a href="https://openfreemap.org/">OpenFreeMap</a> vector tiles © <a href="https://www.openmaptiles.org/">OpenMapTiles</a> data from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Sites: TfL <em>1 Monitoring locations.csv</em>. Click a dot for its history.</p>
+  </div>
+</section>
+
+<section id="day">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">A weekday in the network</p>
+      <h2>Sixteen hours of cycling, in twenty seconds</h2>
+      <p>Every 15 minutes between 06:00 and 22:00, each of the panel sites in the animation (1,447 of the 1,451 with usable 2025 data) records how many bikes pass. Here that record is replayed as an average spring 2025 weekday: brighter and larger means busier. Watch the morning peak build around 08:30 in the centre, the lull, and the evening peak that is broader and spreads further out.</p>
+    </div>
+    <div class="daybox">
+      <div id="day-map"></div>
+      <div class="day-clock"><span id="day-time">06:00</span><small>cycles per hour, all sites <b id="day-total">0</b></small></div>
+      <div class="day-ctl">
+        <button id="day-play" type="button" aria-label="Play or pause">❚❚</button>
+        <div class="day-track"><svg id="day-spark" viewBox="0 0 600 40" preserveAspectRatio="none"></svg><input id="day-range" type="range" min="0" max="1" step="0.001" value="0" aria-label="Time of day"></div>
+        <div class="day-legend"><span>quiet</span><i></i><span>busy</span></div>
+      </div>
+    </div>
+    <p class="mapnote">Method: weekday counts from the TfL spring 2025 wave, all directions and cycle classes added, averaged over the survey rounds per site, then linearly interpolated between 15-minute slots for smooth playback. Counts are scaled to cycles per hour (×4). Script: <code>analysis/05_daily_profile.py</code>. Basemap: <a href="https://openfreemap.org/">OpenFreeMap</a> © OpenMapTiles, data © OpenStreetMap contributors.</p>
   </div>
 </section>
 
@@ -320,5 +341,6 @@ stages<sub>we</sub> = cycle-km / <span class="unk">S<sub>we</sub></span> × <spa
 
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script src="app.js"></script>
+<script src="day.js"></script>
 </body>
 </html>
