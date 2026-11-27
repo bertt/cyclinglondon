@@ -160,6 +160,32 @@ stages<sub>we</sub> = cycle-km / <span class="unk">S<sub>we</sub></span> × <spa
   </div>
 </section>
 
+<section id="strata-map-section">
+  <div class="wrap">
+    <div class="text">
+      <p class="secno">3b · The 15 strata on the map</p>
+      <h2>Three areas, five road types</h2>
+      <p>The strategic panel samples <b>3 areas × 5 road types = 15 strata</b>. Shaded zones are the Central, Inner and Outer areas; lines are the OpenStreetMap road network as drawn in the OpenFreeMap vector tiles, grouped into the five TfL road types; dots are the 1,451 panel sites, coloured by the road type they belong to. Filter by road type to see where each stratum's sites sit.</p>
+    </div>
+    <div class="mapbox">
+      <div class="mapctl">
+        <label>Area</label>
+        <div id="sm-areas" class="legend-list"></div>
+        <label for="sm-road">Road type</label>
+        <select id="sm-road">
+          <option value="all">All five types</option>
+          <option>A</option><option>B</option><option>Minor</option><option>Local</option><option>Path</option>
+        </select>
+        <label class="chk"><input type="checkbox" id="sm-lines" checked> Roads from vector tiles</label>
+        <label class="chk"><input type="checkbox" id="sm-sites" checked> Panel sites (<span id="sm-count"></span>)</label>
+        <div id="sm-roads" class="legend-list"></div>
+      </div>
+      <div id="strata-map"></div>
+    </div>
+    <p class="mapnote">Road types: <b>A</b>/<b>B</b> = OSM <code>ref</code> starting A or B (<code>transportation_name</code> layer); <b>Minor</b> = other trunk/primary/secondary/tertiary roads; <b>Local</b> = residential and unclassified streets (the tiles do not separate these, and service roads are left out); <b>Motor-vehicle-free path</b> = <code>path</code> class (cycleways, footpaths, tracks). Area zones are our approximation: each point takes the area of its nearest monitoring site (<code>analysis/07_areas.py</code>, DuckDB spatial), since TfL's polygons are not published. Basemap: <a href="https://openfreemap.org/">OpenFreeMap</a> © OpenMapTiles, © OpenStreetMap contributors.</p>
+  </div>
+</section>
+
 <section id="day">
   <div class="wrap">
     <div class="text">
@@ -413,5 +439,6 @@ stages<sub>we</sub> = cycle-km / <span class="unk">S<sub>we</sub></span> × <spa
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script src="app.js"></script>
 <script src="day.js"></script>
+<script src="strata-map.js"></script>
 </body>
 </html>
