@@ -10,7 +10,7 @@
   document.getElementById("sm-count").textContent = sites.features.length.toLocaleString("en-GB");
 
   const AREA = { Central: "#d6336c", Inner: "#f59f00", Outer: "#4c6ef5" };
-  const ROAD = { A: "#d9230f", B: "#ef7d00", Minor: "#8a6d00", Local: "#6b7a99", Path: "#1f9d55" };
+  const ROAD = { A: "#d9230f", B: "#ef7d00", Minor: "#8e44ad", Local: "#6b7a99", Path: "#1f9d55" };
   const ROAD_LABEL = { A: "A road", B: "B road", Minor: "Minor road", Local: "Local street", Path: "Motor-vehicle-free path" };
 
   document.getElementById("sm-areas").innerHTML = Object.entries(AREA)
@@ -55,8 +55,8 @@
     map.addSource("omt", { type: "vector", url: "https://tiles.openfreemap.org/planet" });
     road("r-local", "omt", "transportation", ["in", ["get", "class"], ["literal", ["minor", "living_street"]]], ROAD.Local, w(0.3, 0.7, 2), { minzoom: 11 });
     road("r-minor", "omt", "transportation", ["in", ["get", "class"], ["literal", trunkish]], ROAD.Minor, w(0.6, 1.2, 3.5));
-    road("r-b", "omt", "transportation_name", isRef("B"), ROAD.B, w(1, 1.8, 4));
-    road("r-a", "omt", "transportation_name", isRef("A"), ROAD.A, w(1.2, 2.4, 5));
+    road("r-b", "omt", "transportation_name", isRef("B"), ROAD.B, w(1.4, 2.6, 5));
+    road("r-a", "omt", "transportation_name", isRef("A"), ROAD.A, w(1.6, 3, 6));
     road("r-path", "omt", "transportation", ["==", ["get", "class"], "path"], ROAD.Path, w(0.4, 1, 2.5), { minzoom: 11 });
 
     map.addLayer({
