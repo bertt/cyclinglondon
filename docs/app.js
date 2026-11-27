@@ -227,7 +227,6 @@
       bounds: [[-0.56, 51.27], [0.34, 51.71]],
       fitBoundsOptions: { padding: 20 },
       attributionControl: { compact: true },
-      cooperativeGestures: true,
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     const el = { year: document.getElementById("m-year"), mode: document.getElementById("m-mode"), area: document.getElementById("m-area"), panel: document.getElementById("m-panel"), legend: document.getElementById("legend") };

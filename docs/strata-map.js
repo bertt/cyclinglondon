@@ -24,7 +24,6 @@
     bounds: [[-0.5, 51.28], [0.28, 51.7]],
     fitBoundsOptions: { padding: 20 },
     attributionControl: { compact: true },
-    cooperativeGestures: true,
   });
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 

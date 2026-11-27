@@ -30,7 +30,6 @@
     bounds: [[-0.4, 51.38], [0.12, 51.63]],
     fitBoundsOptions: { padding: { top: 90, bottom: 70, left: 20, right: 20 } },
     attributionControl: { compact: true },
-    cooperativeGestures: true,
   });
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
   window.dayMap = map;
